@@ -1,0 +1,17 @@
+{
+  "max_topics_per_run": 3,
+  "schedule": "0 3 * * *",
+  "model": "sonnet",
+  "scanner_timeout": 30,
+  "quality_gates": {
+    "P1": { "min_lines": 800, "min_sources": 5 },
+    "P2": { "min_lines": 500, "min_sources": 3 },
+    "P3": { "min_lines": 300, "min_sources": 3 }
+  },
+  "notifications": {
+    "desktop": true,
+    "telegram": true
+  },
+  "vault_path": "~/Documents/OpenClaw-Vault",
+  "log_dir": "12-LOGS/claude-code/research"
+}
