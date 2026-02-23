@@ -128,6 +128,21 @@ FILES_TOUCHED="$(jq -r '
     end
 ' "$TRANSCRIPT_PATH" 2>/dev/null | sort -u | head -30 || true)"
 
+# --- Task/Plan Extraction ---
+TASKS_JSON=$(jq -c '
+  select(.type=="tool_use") |
+  select(.tool_name=="TaskCreate" or .tool_name=="TaskUpdate") |
+  {tool: .tool_name, input: .tool_input}
+' "$TRANSCRIPT_PATH" 2>/dev/null || true)
+
+TASK_COUNT=0
+if [ -n "$TASKS_JSON" ]; then
+  TASK_COUNT=$(echo "$TASKS_JSON" | grep -c "TaskCreate" || true)
+fi
+
+# Count write operations for skill-candidate tagging
+WRITE_OP_COUNT=$(jq -c 'select(.type=="tool_use") | select(.tool_name=="Edit" or .tool_name=="Write" or .tool_name=="MultiEdit")' "$TRANSCRIPT_PATH" 2>/dev/null | wc -l)
+
 # ---------------------------------------------------------------------------
 # Extract title from first real user message
 # ---------------------------------------------------------------------------
@@ -235,6 +250,12 @@ fi
     echo "tags:"
     echo "  - claude-code"
     echo "  - session-log"
+    if (( WRITE_OP_COUNT >= 3 )); then
+        echo "  - skill-candidate"
+    fi
+    if (( TASK_COUNT > 0 )); then
+        echo "  - has-plan"
+    fi
     echo "tools_used:"
     if [[ -n "$TOOLS_YAML" ]]; then
         printf '%s' "$TOOLS_YAML"
@@ -403,6 +424,28 @@ print(cleaned.strip())
         esac
     done
 
+    # --- Implementation Plan Section ---
+    if [ -n "$TASKS_JSON" ] && (( TASK_COUNT > 0 )); then
+        echo ""
+        echo "## Implementation Plan"
+        echo ""
+        echo "$TASKS_JSON" | jq -r '
+            select(.tool == "TaskCreate") |
+            "- [ ] **" + (.input.subject // "Untitled") + "**" +
+            if .input.description then "\n  " + .input.description else "" end
+        ' 2>/dev/null || true
+        echo ""
+        COMPLETED=$(echo "$TASKS_JSON" | jq -r '
+            select(.tool == "TaskUpdate") |
+            select(.input.status == "completed") |
+            .input.taskId // empty
+        ' 2>/dev/null || true)
+        if [ -n "$COMPLETED" ]; then
+            echo "*Completed tasks: $(echo "$COMPLETED" | tr '\n' ', ' | sed 's/,$//')*"
+            echo ""
+        fi
+    fi
+
 } > "$OUT_FILE"
 
 log "Wrote session note: $OUT_FILE"
@@ -511,6 +554,77 @@ with open(daily_path, 'w') as f:
 " "$DAILY_FILE" "$DAILY_ENTRY"
 
 log "Updated daily note: $DAILY_FILE"
+
+# ---------------------------------------------------------------------------
+# Generate standalone plan document (if tasks were created)
+# ---------------------------------------------------------------------------
+if (( TASK_COUNT > 0 )); then
+    PLAN_DIR="$VAULT_ROOT/12-LOGS/claude-plans/$SESSION_YEAR/$SESSION_MONTH"
+    mkdir -p "$PLAN_DIR"
+
+    PLAN_FILE="$PLAN_DIR/${BASE_NAME}-plan.md"
+    PLAN_COUNTER=2
+    while [[ -f "$PLAN_FILE" ]]; do
+        PLAN_FILE="$PLAN_DIR/${BASE_NAME}-plan-${PLAN_COUNTER}.md"
+        (( PLAN_COUNTER++ ))
+    done
+
+    RELATIVE_SESSION="12-LOGS/claude-code/$SESSION_YEAR/$SESSION_MONTH/$(basename "$OUT_FILE" .md)"
+
+    {
+        echo "---"
+        echo "title: \"Plan: $TITLE\""
+        echo "date: $SESSION_DATE"
+        echo "session_id: \"$SESSION_ID\""
+        echo "project: \"$PROJECT\""
+        echo "type: implementation-plan"
+        echo "tags:"
+        echo "  - plan"
+        echo "  - claude-code"
+        if (( WRITE_OP_COUNT >= 3 )); then
+            echo "  - skill-candidate"
+        fi
+        echo "---"
+        echo ""
+        echo "# Plan: $TITLE"
+        echo ""
+        echo "> From session [[$RELATIVE_SESSION|$SESSION_DATE — $TITLE]]"
+        echo "> Project: **$PROJECT**"
+        echo ""
+        echo "## Tasks"
+        echo ""
+        echo "$TASKS_JSON" | jq -r '
+            select(.tool == "TaskCreate") |
+            "- [ ] **" + (.input.subject // "Untitled") + "**" +
+            if .input.description then "\n  " + .input.description else "" end +
+            if .input.activeForm then "\n  *Active: " + .input.activeForm + "*" else "" end
+        ' 2>/dev/null || true
+        echo ""
+    } > "$PLAN_FILE"
+
+    log "Wrote plan document: $PLAN_FILE"
+
+    # Update plans MOC
+    PLAN_MOC="$VAULT_ROOT/12-LOGS/claude-plans/_index.md"
+    if [[ -f "$PLAN_MOC" ]]; then
+        RELATIVE_PLAN="$SESSION_YEAR/$SESSION_MONTH/$(basename "$PLAN_FILE" .md)"
+        PLAN_MOC_ENTRY="- [[$RELATIVE_PLAN|$SESSION_DATE — $TITLE]] ($PROJECT)"
+
+        if grep -qF '<!-- NEW_PLAN_ENTRY -->' "$PLAN_MOC"; then
+            python3 -c "
+import sys
+moc_path, entry = sys.argv[1], sys.argv[2]
+marker = '<!-- NEW_PLAN_ENTRY -->'
+with open(moc_path, 'r') as f:
+    content = f.read()
+content = content.replace(marker, entry + '\n' + marker, 1)
+with open(moc_path, 'w') as f:
+    f.write(content)
+" "$PLAN_MOC" "$PLAN_MOC_ENTRY"
+            log "Updated plans MOC: $PLAN_MOC"
+        fi
+    fi
+fi
 
 # ---------------------------------------------------------------------------
 # Mark session as synced
