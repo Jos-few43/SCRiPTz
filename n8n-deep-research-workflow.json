@@ -1,0 +1,123 @@
+{
+  "name": "deep-research-pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Daily 3AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "command": "bash ${HOME}/SCRiPTz/run-deep-research.sh 3",
+        "cwd": "${HOME}",
+        "timeout": 600
+      },
+      "id": "run-research",
+      "name": "Run Research Pipeline",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "command": "echo \"$(date '+%Y-%m-%d %H:%M:%S'): Research pipeline failed — exit code $?\" >> ${HOME}/Documents/OpenClaw-Vault/12-LOGS/claude-code/research/errors.log"
+      },
+      "id": "error-logger",
+      "name": "Log Error",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [750, 450]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.exitCode }}",
+              "operation": "equal",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "check-success",
+      "name": "Check Exit Code",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [750, 300]
+    },
+    {
+      "parameters": {},
+      "id": "success-noop",
+      "name": "Success",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1000, 200]
+    }
+  ],
+  "connections": {
+    "Daily 3AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run Research Pipeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Research Pipeline": {
+      "main": [
+        [
+          {
+            "node": "Check Exit Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Exit Code": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "research"
+    },
+    {
+      "name": "automation"
+    }
+  ]
+}
