@@ -646,3 +646,13 @@ if [[ -f "$MEMORY_EXTRACTOR" ]] && command -v bun &>/dev/null; then
 else
     log "INFO: memory extractor not available (missing bun or script)"
 fi
+
+# ---------------------------------------------------------------------------
+# Sync Claude memory back to shared-memory (best-effort)
+# ---------------------------------------------------------------------------
+INGEST_SCRIPT="${HOME}/shared-memory/scripts/ingest.sh"
+if [[ -f "$INGEST_SCRIPT" ]]; then
+    bash "$INGEST_SCRIPT" 2>&1 | while read -r line; do
+        log "$line"
+    done || log "WARNING: ingest failed (non-fatal)"
+fi
