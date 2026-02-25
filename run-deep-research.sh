@@ -204,16 +204,17 @@ List of sources consulted. Use web search to find current, authoritative sources
 - Search the web for up-to-date information on this topic
 - Read any related vault files to maintain consistency with existing knowledge
 
+IMPORTANT: Do NOT ask clarifying questions. Do NOT request additional context. Generate the best possible report based on the topic name and any available context. If the topic seems vague, interpret it broadly and produce a comprehensive overview. You MUST write the report file using the Write tool — do not output it to stdout.
+
 Write the complete report to the file path specified above.
 PROMPT_EOF
 )"
 
-  # Run claude --print
+  # Run claude --print (pipe prompt via stdin to avoid ARG_MAX issues with large prompts)
   log "Running claude research for: ${TOPIC}"
-  if ! claude --print \
+  if ! echo "$PROMPT" | claude --print \
     --model sonnet \
     --allowedTools "Bash,Read,Write,Glob,Grep,WebSearch,WebFetch" \
-    "$PROMPT" \
     >> "$LOG_DIR/claude-output-${TODAY}.log" 2>&1; then
     log_error "claude --print failed for topic: ${TOPIC}"
     echo $(( $(cat "$COUNTERS_DIR/errors") + 1 )) > "$COUNTERS_DIR/errors"
