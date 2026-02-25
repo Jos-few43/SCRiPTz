@@ -634,3 +634,15 @@ jq --arg id "$SESSION_ID" '.synced += [$id]' "$STATE_FILE" > "${STATE_FILE}.tmp"
 
 log "Session $SESSION_ID synced successfully"
 log "Output: $OUT_FILE"
+
+# ---------------------------------------------------------------------------
+# Run memory extractor (best-effort, don't fail the hook)
+# ---------------------------------------------------------------------------
+MEMORY_EXTRACTOR="${HOME}/OpenClaw-Vault/scripts/vault-importer/src/memory-extractor.ts"
+if [[ -f "$MEMORY_EXTRACTOR" ]] && command -v bun &>/dev/null; then
+    bun run "$MEMORY_EXTRACTOR" "$TRANSCRIPT_PATH" 2>&1 | while read -r line; do
+        log "$line"
+    done || log "WARNING: memory extractor failed (non-fatal)"
+else
+    log "INFO: memory extractor not available (missing bun or script)"
+fi
