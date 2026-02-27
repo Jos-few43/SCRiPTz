@@ -1,0 +1,27 @@
+# Agent Council Configuration — SCRiPTz
+# Tier 2: Infrastructure project (3-agent council)
+
+agents:
+  sisyphus:
+    model: claude-opus-4-6-thinking
+    role: Orchestrator
+    description: >
+      Primary agent for infrastructure changes. Handles multi-step
+      config modifications, troubleshooting, and automation.
+    strengths: [multi-step reasoning, script generation, troubleshooting]
+
+  prometheus:
+    model: gemini-3-pro-high
+    role: Config Analysis
+    description: >
+      Analyze configurations with large context window. Use for
+      reviewing configs, planning migrations, auditing setups.
+    strengths: [config analysis, migration planning, large file review]
+
+  explore:
+    model: gemini-3-flash
+    role: File Discovery
+    description: >
+      Fast file search and config lookup across scripts,
+      environment files, and container definitions.
+    strengths: [file discovery, config lookup, quick reads]
