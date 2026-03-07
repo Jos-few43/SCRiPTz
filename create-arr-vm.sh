@@ -1,6 +1,6 @@
 #!/bin/bash
 # ARR Stack VM Creation Script
-# Run this on Proxmox VE (${PROXMOX_HOST})
+# Run this on Proxmox VE (set PROXMOX_HOST env var to your Proxmox IP)
 
 set -e
 

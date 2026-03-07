@@ -1,9 +1,9 @@
 #!/bin/bash
 # Proxmox Manager - API-based management
 
-TOKEN_ID="opencode@pam!opencode-token"
-TOKEN_SECRET="${PROXMOX_TOKEN_SECRET}"
-API_URL="https://${PROXMOX_HOST}:8006"
+TOKEN_ID="${PROXMOX_TOKEN_ID:-opencode@pam!opencode-token}"
+TOKEN_SECRET="${PROXMOX_TOKEN_SECRET:?PROXMOX_TOKEN_SECRET env var is required}"
+API_URL="https://${PROXMOX_HOST:-${PROXMOX_HOST}}:8006"
 
 api_call() {
     curl -k -H "Authorization: PVEAPIToken=$TOKEN_ID=$TOKEN_SECRET" \
