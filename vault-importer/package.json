@@ -1,0 +1,29 @@
+{
+  "name": "vault-importer",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "sync": "bun run src/index.ts sync",
+    "watch": "bun run src/index.ts watch",
+    "dry-run": "bun run src/index.ts sync --dry-run",
+    "litellm": "bun run src/index.ts litellm",
+    "orphans": "bun run src/index.ts orphans",
+    "migrate": "bun run src/tag-migrator.ts",
+    "migrate:dry": "bun run src/tag-migrator.ts --dry-run",
+    "terminology": "bun run src/terminology-integrator.ts",
+    "terminology:dry": "bun run src/terminology-integrator.ts --dry-run",
+    "link-chains": "bun run src/index.ts link-chains",
+    "link-chains:dry": "bun run src/index.ts link-chains --dry-run",
+    "commands": "bun run src/index.ts commands",
+    "commands:dry": "bun run src/index.ts commands --dry-run"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.0",
+    "glob": "^11.0.0",
+    "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

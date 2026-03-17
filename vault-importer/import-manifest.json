@@ -1,0 +1,308 @@
+{
+  "vaultRoot": "/var/home/yish/Documents/OpenClaw-Vault",
+  "homeDir": "/var/home/yish",
+  "sources": [
+    {
+      "name": "instructions",
+      "paths": [
+        "~/NSTRUCTiONz/**/*.md",
+        "~/.claude/context/*.md",
+        "~/.claude/CLAUDE.md"
+      ],
+      "exclude": [],
+      "dest": "060-imports/instructions",
+      "transform": "markdown",
+      "watch": true,
+      "redact": false,
+      "tags": ["type/import", "domain/devexp", "topic/instruction"]
+    },
+    {
+      "name": "configs",
+      "paths": [
+        "~/litellm-stack/**/*.{yaml,yml,json,toml}",
+        "~/distrobox-configs/**/*.{ini,yaml,yml}",
+        "~/opt-ai-agents/*/*.{json,yaml,toml}"
+      ],
+      "exclude": [
+        "**/node_modules/**",
+        "**/oh-my-opencode/**",
+        "**/.opencode/**",
+        "**/bun.lock",
+        "**/package-lock.json"
+      ],
+      "dest": "060-imports/configs",
+      "transform": "config",
+      "watch": true,
+      "redact": false,
+      "tags": ["type/import", "domain/infra"]
+    },
+    {
+      "name": "scripts",
+      "paths": [
+        "~/SCRiPTz/*.sh",
+        "~/SCRiPTz/*.json"
+      ],
+      "exclude": [],
+      "dest": "060-imports/scripts",
+      "transform": "code",
+      "watch": true,
+      "redact": false,
+      "tags": ["type/import", "domain/devexp", "lang/bash"]
+    },
+    {
+      "name": "skills",
+      "paths": [
+        "~/shared-skills/source/**/*.md"
+      ],
+      "exclude": [],
+      "dest": "060-imports/skills",
+      "transform": "markdown",
+      "watch": true,
+      "redact": false,
+      "tags": ["type/import", "domain/devexp", "topic/skill"]
+    },
+    {
+      "name": "projects",
+      "paths": [
+        "~/PROJECTz/*/README.md",
+        "~/PROJECTz/*/CLAUDE.md",
+        "~/PROJECTz/*/docs/**/*.md"
+      ],
+      "exclude": [
+        "**/node_modules/**"
+      ],
+      "dest": "060-imports/projects",
+      "transform": "markdown",
+      "watch": false,
+      "redact": false,
+      "tags": ["type/import", "domain/general"]
+    },
+    {
+      "name": "dotfiles",
+      "paths": [
+        "~/.bashrc",
+        "~/.gitconfig",
+        "~/.bashrc.d/*"
+      ],
+      "exclude": [],
+      "dest": "060-imports/dotfiles",
+      "transform": "config",
+      "watch": false,
+      "redact": true,
+      "tags": ["type/import", "domain/devexp"]
+    },
+    {
+      "name": "env-files",
+      "paths": [
+        "~/litellm-stack/**/.env*",
+        "~/PROJECTz/**/.env*",
+        "~/.openclaw/.env*",
+        "~/opt-ai-agents/**/.env*"
+      ],
+      "exclude": [
+        "**/node_modules/**"
+      ],
+      "dest": "060-imports/env",
+      "transform": "env",
+      "watch": false,
+      "redact": true,
+      "tags": ["type/import", "domain/infra"]
+    },
+    {
+      "name": "arr-media-stack",
+      "paths": [
+        "~/arr-media-stack/docker-compose.yml",
+        "~/arr-media-stack/traefik/**/*.{yml,yaml,toml}",
+        "~/arr-media-stack/SETUP.md",
+        "~/arr-media-stack/*.sh"
+      ],
+      "exclude": [
+        "**/data/**",
+        "**/data_backup_*/**",
+        "**/logs/**"
+      ],
+      "dest": "060-imports/arr-media-stack",
+      "transform": "config",
+      "watch": false,
+      "redact": true,
+      "tags": ["type/import", "domain/ops", "tool/docker"]
+    },
+    {
+      "name": "shared-commands",
+      "paths": [
+        "~/shared-commands/source/**/*.md",
+        "~/shared-commands/scripts/**/*.sh",
+        "~/shared-commands/README.md"
+      ],
+      "exclude": [
+        "**/node_modules/**",
+        "**/dist/**"
+      ],
+      "dest": "060-imports/shared-commands",
+      "transform": "markdown",
+      "watch": true,
+      "redact": false,
+      "tags": ["type/import", "domain/devexp"]
+    },
+    {
+      "name": "docs",
+      "paths": [
+        "~/docs/**/*.md"
+      ],
+      "exclude": [
+        "**/node_modules/**"
+      ],
+      "dest": "060-imports/docs",
+      "transform": "markdown",
+      "watch": false,
+      "redact": false,
+      "tags": ["type/import", "domain/general"]
+    },
+    {
+      "name": "claude-plugins",
+      "paths": [
+        "~/.claude/plugins/*/plugin.json",
+        "~/.claude/plugins/*/README.md",
+        "~/.claude/plugins/*/SKILL.md"
+      ],
+      "exclude": [
+        "**/node_modules/**",
+        "**/cache/**"
+      ],
+      "dest": "060-imports/claude-plugins",
+      "transform": "config",
+      "watch": false,
+      "redact": false,
+      "tags": ["type/import", "tool/claude-code"]
+    },
+    {
+      "name": "python-scripts",
+      "paths": [
+        "~/PROJECTz/fftpeg/**/*.py",
+        "~/PROJECTz/openclaw-tui/**/*.py",
+        "~/PROJECTz/token-tracker/**/*.py",
+        "~/PROJECTz/comfyui-workflows/**/*.py",
+        "~/PROJECTz/ai-tools-hub/**/*.py",
+        "~/PROJECTz/cortex/**/*.py",
+        "~/PROJECTz/opencode-model-themes/**/*.py",
+        "~/PROJECTz/game-of-life/**/*.py",
+        "~/PROJECTz/*.py",
+        "~/SCRiPTz/*.py"
+      ],
+      "exclude": [
+        "**/__pycache__/**",
+        "**/__init__.py",
+        "**/conftest.py",
+        "**/venv/**",
+        "**/venv-*/**",
+        "**/.venv/**",
+        "**/site-packages/**",
+        "**/.tox/**"
+      ],
+      "dest": "060-imports/python",
+      "transform": "code",
+      "watch": true,
+      "redact": false,
+      "tags": ["type/import", "domain/devexp", "lang/python"]
+    },
+    {
+      "name": "claude-code-configs",
+      "paths": [
+        "~/.claude/settings.json",
+        "~/.claude/settings.local.json",
+        "~/.claude/keybindings.json"
+      ],
+      "exclude": [],
+      "dest": "060-imports/claude-code",
+      "transform": "config",
+      "watch": true,
+      "redact": false,
+      "tags": ["type/import", "tool/claude-code", "domain/devexp"]
+    },
+    {
+      "name": "claude-code-hooks",
+      "paths": [
+        "~/.claude/hooks/**/*.sh",
+        "~/.claude/hooks/**/*.js"
+      ],
+      "exclude": [],
+      "dest": "060-imports/claude-code/hooks",
+      "transform": "code",
+      "watch": true,
+      "redact": false,
+      "tags": ["type/import", "tool/claude-code"]
+    },
+    {
+      "name": "mcp-configs",
+      "paths": [
+        "~/PROJECTz/*/.mcp.json",
+        "~/Documents/OpenClaw-Vault/.mcp.json",
+        "~/.claude/.mcp.json"
+      ],
+      "exclude": [],
+      "dest": "060-imports/claude-code/mcp",
+      "transform": "config",
+      "watch": true,
+      "redact": true,
+      "tags": ["type/import", "tool/mcp", "domain/devexp"]
+    },
+    {
+      "name": "opencode-configs",
+      "paths": [
+        "~/opt-ai-agents/opencode/opencode.json",
+        "~/opt-ai-agents/opencode/oh-my-opencode.json",
+        "~/opt-ai-agents/opencode/antigravity-accounts.json",
+        "~/opt-ai-agents/opencode/auth.json",
+        "~/opt-ai-agents/opencode/shared-memory-context.md"
+      ],
+      "exclude": [],
+      "dest": "060-imports/opencode",
+      "transform": "config",
+      "watch": true,
+      "redact": true,
+      "tags": ["type/import", "tool/opencode", "domain/devexp"]
+    },
+    {
+      "name": "opencode-plugins",
+      "paths": [
+        "~/opt-ai-agents/opencode/oh-my-opencode/package.json",
+        "~/opt-ai-agents/opencode/oh-my-opencode/.opencode/skills/*/SKILL.md",
+        "~/opt-ai-agents/opencode/opencode-antigravity-multi-auth/package.json",
+        "~/opt-ai-agents/opencode/opencode-shell-strategy/package.json"
+      ],
+      "exclude": [
+        "**/node_modules/**"
+      ],
+      "dest": "060-imports/opencode/plugins",
+      "transform": "config",
+      "watch": false,
+      "redact": false,
+      "tags": ["type/import", "tool/opencode"]
+    },
+    {
+      "name": "vault-scripts",
+      "paths": [
+        "~/Documents/OpenClaw-Vault/scripts/*.sh"
+      ],
+      "exclude": [],
+      "dest": "060-imports/vault-scripts",
+      "transform": "code",
+      "watch": false,
+      "redact": false,
+      "tags": ["type/import", "domain/devexp", "lang/bash"]
+    },
+    {
+      "name": "vault-importer-src",
+      "paths": [
+        "~/Documents/OpenClaw-Vault/scripts/vault-importer/src/*.ts",
+        "~/Documents/OpenClaw-Vault/scripts/token-efficiency/*.ts"
+      ],
+      "exclude": ["**/__tests__/**", "**/*.test.ts"],
+      "dest": "060-imports/vault-importer",
+      "transform": "code",
+      "watch": false,
+      "redact": false,
+      "tags": ["type/import", "domain/devexp", "lang/typescript", "tool/vault-importer"]
+    }
+  ]
+}
