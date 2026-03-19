@@ -38,10 +38,11 @@ interface ParsedModel {
   port: number;
 }
 
+const LITELLM_ROOT = process.env.LITELLM_ROOT ?? `${process.env.HOME}/litellm-stack`;
 const CONFIG_PATHS = {
-  blue: "/var/home/yish/litellm-stack/blue/config.yaml",
-  green: "/var/home/yish/litellm-stack/green/config.yaml",
-  router: "/var/home/yish/litellm-stack/router/haproxy.cfg",
+  blue: `${LITELLM_ROOT}/blue/config.yaml`,
+  green: `${LITELLM_ROOT}/green/config.yaml`,
+  router: `${LITELLM_ROOT}/router/haproxy.cfg`,
 };
 
 function detectProvider(model: string): string {
